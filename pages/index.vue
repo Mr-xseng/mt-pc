@@ -8,13 +8,13 @@
       </el-col>
       <el-col
         :span="19"
-      >12</el-col>
+      ><home-life/></el-col>
     </el-row>
     <el-row>
       <el-col
         :span="24"
       >
-        24
+        <home-artistic/>
       </el-col>
     </el-row>
   </div>
@@ -22,9 +22,13 @@
 
 <script>
 import homeMenu from '../components/index/menu'
+import homeLife from '../components/index/life'
+import homeArtistic from '../components/index/artistic'
 export default {
   components: {
-    homeMenu
+    homeMenu,
+    homeLife,
+    homeArtistic
   }
 }
 </script>
