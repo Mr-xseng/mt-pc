@@ -1,23 +1,36 @@
 import Router from 'koa-router';
 import Redis from 'koa-redis'
 import nodeMailer from 'nodemailer'
-import User from '../dbs/modules/user'
 import Passport from './utils/passport'
 import Email from '../dbs/config'
 import axios from './utils/axios'
+import mongoose from 'mongoose'
+import User from '../dbs/models/users'
+
+const dbs = 'mongodb://127.0.0.1:27017/student'
 
 let router = new Router({prefix: '/users'})
 
 let Store = new Redis().client
 
 router.post('/signup', async (ctx) => {
+  await mongoose.connect(dbs,{
+    useNewUrlParser: true
+  })
+  mongoose.connection.on('connected', function () {
+    // console.log('mongo connect success')
+  })
   const {username, password, email, code} = ctx.request.body;
-
+  // console.log(username, password, email, code)
   if (code) {
+    // console.log(code)
     const saveCode = await Store.hget(`nodemail:${username}`, 'code')
+    // console.log(code)
     const saveExpire = await Store.hget(`nodemail:${username}`, 'expire')
+    // console.log(code)
     if (code === saveCode) {
       if (new Date().getTime() - saveExpire > 0) {
+        // console.log('过期')
         ctx.body = {
           code: -1,
           msg: '验证码已过期，请重新尝试'
@@ -25,41 +38,57 @@ router.post('/signup', async (ctx) => {
         return false
       }
     } else {
+      // console.log('验证码')
       ctx.body = {
         code: -1,
         msg: '请填写正确的验证码'
       }
     }
   } else {
+    console.log('填写')
     ctx.body = {
       code: -1,
       msg: '请填写验证码'
     }
   }
+  // console.log('找库前')
   let user = await User.find({username})
+  // console.log('找库后');
   if (user.length) {
+    // console.log('被注册')
     ctx.body = {
       code: -1,
       msg: '已被注册'
     }
     return
   }
-  let nuser = await User.create({username, password, email})
+  // console.log('建库前')
+  let nuser = await User.create({
+    username,
+    password,
+    email
+  })
   if (nuser) {
+    // console.log('保存数据前')
+    await nuser.save()
+    // console.log('注册前')
     let res = await axios.post('/users/signin', {username, password})
     if (res.data && res.data.code === 0) {
+      // console.log('注册成功')
       ctx.body = {
         code: 0,
         msg: '注册成功',
         user: res.data.user
       }
     } else {
+      // console.log(err)
       ctx.body = {
         code: -1,
         msg: 'error'
       }
     }
   } else {
+    // console.log('写库失败')
     ctx.body = {
       code: -1,
       msg: '注册失败'
@@ -94,6 +123,7 @@ router.post('/signin', async (ctx, next) => {
 
 router.post('/verify', async (ctx, next) => {
   let username = ctx.request.body.username
+  // console.log(username)
   const saveExpire = await Store.hget(`nodemail:${username}`, 'expire')
   if (saveExpire && new Date().getTime() - saveExpire < 0) {
     ctx.body = {
@@ -118,8 +148,8 @@ router.post('/verify', async (ctx, next) => {
   let mailOptions = {
     from: `"认证邮件" <${Email.smtp.user}>`,
     to: ko.email,
-    subject: '《慕课网高仿美团网全栈实战》注册码',
-    html: `您在《慕课网高仿美团网全栈实战》课程中注册，您的邀请码是${ko.code}`
+    subject: '902注册码',
+    html: `您在902中注册，您的邀请码是${ko.code}`
   }
   await transporter.sendMail(mailOptions, (error, info) => {
     if (error) {

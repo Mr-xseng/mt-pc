@@ -40,7 +40,8 @@
 </template>
 
 <script>
-// import CryptoJS from 'crypto-js'
+import CryptoJS from 'crypto-js'
+import axios from 'axios'
 export default {
   data: () => {
     return {
@@ -52,7 +53,23 @@ export default {
   },
   layout: 'blank',
   methods: {
-    login () {}
+    login () {
+      let self = this
+      axios.post('/users/signin',{
+        username:window.encodeURIComponent(self.username),
+        password:CryptoJS.MD5(self.password).toString()
+      }).then(({status,data}) => {
+        if (status === 200) {
+          if (data&&data.code === 0){
+            location.href = '/'
+          } else {
+            self.err = data.msg
+          }
+        } else {
+          self.err = '服务器崩溃了呀~~'
+        }
+      })
+    }
   }
 }
 </script>

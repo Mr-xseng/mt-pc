@@ -15,40 +15,35 @@
           <el-input
             v-model="search"
             placeholder="搜索商家或地点"
-            @blur="blur"
             @focus="focus"
-            @input="input"
-          />
+            @blur="blur"
+            @input="input"/>
           <button class="el-button el-button--primary"><i class="el-icon-search"/></button>
           <dl
             v-if="isHotPlace"
-            class="hotPlace"
-          >
+            class="hotPlace">
             <dt>热门搜索</dt>
             <dd
-              v-for="(item, index) in hotPlace"
-              :key="index"
-            >{{ item }}</dd>
+              v-for="(item,idx) in hotPlace"
+              :key="idx">
+              <a :href="'/products?keyword='+encodeURIComponent(item.name)">{{ item.name }}</a>
+            </dd>
           </dl>
           <dl
-            v-if="isSearch"
-            class="searchList"
-          >
+            v-if="isSearchList"
+            class="searchList">
             <dd
-              v-for="(item, index) in searchList"
-              :key="index"
-            >{{ item }}</dd>
+              v-for="(item,idx) in searchList"
+              :key="idx">
+              <a :href="'/products?keyword='+encodeURIComponent(item.name)">{{ item.name }}</a>
+            </dd>
           </dl>
         </div>
         <p class="suggest">
-          <a href="#">故宫博物院</a>
-          <a href="#">故宫博物院</a>
-          <a href="#">故宫博物院</a>
-          <a href="#">故宫博物院</a>
-          <a href="#">故宫博物院</a>
-          <a href="#">故宫博物院</a>
-          <a href="#">故宫博物院</a>
-          <a href="#">故宫博物院</a>
+          <a
+            v-for="(item,idx) in hotPlace"
+            :key="idx"
+            :href="'/products?keyword='+encodeURIComponent(item.name)">{{ item.name }}</a>
         </p>
         <ul class="nav">
           <li><nuxt-link
@@ -80,37 +75,53 @@
     </el-row>
   </div>
 </template>
+
 <script>
+import axios from 'axios'
+import _ from 'lodash'
 export default {
-  data () {
+  data(){
     return {
-      isFocus: false,
-      search: '',
-      hotPlace: ['麻辣烫','麻辣烫','麻辣烫','麻辣烫'],
-      searchList: ['天使之城','天使之城','天使之城','天使之城']
+      search:'',
+      isFocus:false,
+      hotPlace:[],
+      searchList:[]
     }
   },
-  computed: {
-    isSearch () {
-      return this.isFocus && !this.search
+  computed:{
+    isHotPlace:function(){
+      return this.isFocus&&!this.search
     },
-    isHotPlace () {
-      return this.isFocus && this.search
+    isSearchList:function(){
+      return this.isFocus&&this.search
     }
   },
-  methods: {
-    focus () {
-      this.isFocus = true
+  methods:{
+    focus:function(){
+      this.isFocus=true
     },
-    blur () {
-      let self = this
-      setTimeout(() => {
-        self.isFocus = false
+    blur:function(){
+      let self=this;
+      setTimeout(function(){
+        self.isFocus=false
       },200)
     },
-    input () {
-      console.log("input")
-    }
+    input:_.debounce(async function(){
+      let self=this;
+      let city=self.$store.state.geo.position.city.replace('市','')
+      self.searchList=[]
+      console.log(self.search)
+      let {status,data:{top}}=await axios.get('/search/top',{
+        params:{
+          input:self.search,
+          city: '惠州'
+        }
+      })
+      self.searchList=top.slice(0,10)
+    },300)
   }
 }
 </script>
+
+<style lang="css">
+</style>

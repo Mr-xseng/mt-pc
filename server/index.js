@@ -1,16 +1,15 @@
-
-const Koa = require('koa')
+import Koa from 'koa'
 const consola = require('consola')
-const { Nuxt, Builder } = require('nuxt')
+const {Nuxt, Builder} = require('nuxt')
 
-import mongoose from 'mongoose'
 import bodyParser from 'koa-bodyparser'
 import session from 'koa-generic-session'
 import Redis from 'koa-redis'
 import json from 'koa-json'
-import dbConfig from './dbs/config'
 import passport from './interface/utils/passport'
 import users from './interface/users'
+import geo from './interface/geo'
+import search from './interface/search'
 
 const app = new Koa()
 const host = process.env.HOST || '127.0.0.1'
@@ -24,12 +23,10 @@ app.use(bodyParser({
 }))
 app.use(json())
 
-mongoose.connect(dbConfig.dbs,{
-  useNewUrlParser:true
-})
+
+
 app.use(passport.initialize())
 app.use(passport.session())
-
 
 // Import and Set Nuxt.js options
 let config = require('../nuxt.config.js')
@@ -45,6 +42,8 @@ async function start() {
     await builder.build()
   }
   app.use(users.routes()).use(users.allowedMethods())
+  app.use(geo.routes()).use(geo.allowedMethods())
+  app.use(search.routes()).use(search.allowedMethods())
   app.use(ctx => {
     ctx.status = 200 // koa defaults to 404 when it sees that status is unset
 
@@ -59,10 +58,7 @@ async function start() {
   })
 
   app.listen(port, host)
-  consola.ready({
-    message: `Server listening on http://${host}:${port}`,
-    badge: true
-  })
+  consola.ready({message: `Server listening on http://${host}:${port}`, badge: true})
 }
 
 start()
