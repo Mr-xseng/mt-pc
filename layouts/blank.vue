@@ -1,8 +1,13 @@
 <template>
-  <div>
+  <div class="layout-blank">
     <nuxt/>
   </div>
 </template>
+
 <script>
-export default {}
+  export default {
+  }
 </script>
+
+<style lang="css">
+</style>

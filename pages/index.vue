@@ -24,6 +24,7 @@
 import homeMenu from '../components/index/menu'
 import homeLife from '../components/index/life'
 import homeArtistic from '../components/index/artistic'
+import axios from 'axios'
 export default {
   components: {
     homeMenu,

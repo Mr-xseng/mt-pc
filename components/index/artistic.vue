@@ -33,7 +33,9 @@
           <img
             :src="item.img"
             class="image">
-          <ul class="cbody">
+          <ul
+            class="cbody"
+            style="margin-top: -10px">
             <li class="title">{{ item.title }}</li>
             <li class="pos"><span>{{ item.pos }}</span></li>
             <li class="price">￥<em>{{ item.price }}</em><span>/起</span></li>
@@ -44,35 +46,96 @@
   </section>
 </template>
 <script>
-export default {
-  data: () => {
-    return {
-      kind: 'all',
-      list: {
-        all: [],
-        part: [],
-        spa: [],
-        movie: [],
-        travel: []
+  import axios from 'axios'
+  export default {
+    data: () => {
+      return {
+        kind: 'all',
+        list: {
+          all: [],
+          part: [],
+          spa: [],
+          movie: [],
+          travel: []
+        }
       }
-    }
-  },
-  computed: {
-    cur: function () {
-      return this.list[this.kind]
-    }
-  },
-  methods: {
-    over (e) {
-      if (e.target.getAttribute('kind') === null) {
-        return
+    },
+    computed: {
+      cur: function () {
+        return this.list[this.kind]
       }
-      this.kind = e.target.getAttribute('kind')
-    }
-  }
+    },
+    async mounted(){
+      let self=this;
+      let {status,data:{count,pois}}=await axios.get('/search/resultsByKeywords',{
+        params:{
+          keyword:'景点',
+          city:self.$store.state.geo.position.city
+        }
+      })
+      if(status===200&&count>0){
+        let r= pois.filter(item=>item.photos.length).map(item=>{
+          return {
+            title:item.name,
+            pos:item.type.split(';')[0],
+            price:item.biz_ext.cost||'暂无',
+            img:item.photos[0].url,
+            url:'//abc.com'
+          }
+        })
+        self.list[self.kind]=r.slice(0,9)
+      }else{
+        self.list[self.kind]=[]
+      }
+    },
+    methods: {
+      over: async function (e) {
+        let dom = e.target
+        let tag = dom.tagName.toLowerCase()
+        let self = this
+        if (tag === 'dd') {
+          this.kind = dom.getAttribute('kind')
+          let keyword = dom.getAttribute('keyword')
+          let {status,data:{count,pois}} = await axios.get('/search/resultsByKeywords',{
+            params:{
+              keyword,
+              city:self.$store.state.geo.position.city
+            }
+          })
+          if (status === 200 && count > 0) {
+            let r = pois.filter(item => item.photos.length).map(item => {
+              return {
+                title: item.name,
+                pos:item.type.split(';')[0],
+                price:item.biz_ext.cost||'暂无',
+                img:item.photos[0].url,
+                url: '//abc.com'
+              }
+            })
+            self.list[self.kind] = r.slice(0,9)
+          } else {
+            self.list[self.kind] = []
+          }
+          // if(status===200&&count>0){
+          //   let r= pois.filter(item=>item.photos.length).map(item=>{
+          //     return {
+          //       title:item.name,
+          //       pos:item.type.split(';')[0],
+          //       price:item.biz_ext.cost||'暂无',
+          //       img:item.photos[0].url,
+          //       url:'//abc.com'
+          //     }
+          //   })
+          //   self.list[self.kind]=r.slice(0,9)
+          // }else{
+          //   self.list[self.kind]=[]
+          // }
+        }
+      }
+    },
 
-}
+  }
 </script>
 <style lang="scss">
-    @import "../../assets/css/index/artistic.scss";
+  @import "../../assets/css/index/artistic.scss"
 </style>
