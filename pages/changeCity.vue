@@ -7,18 +7,20 @@
       <el-col :span="24"><hot/></el-col>
     </el-row>
     <el-row>
-      <el-col :span="24">12</el-col>
+      <el-col :span="24"><categroy/></el-col>
     </el-row>
   </div>
 </template>
 <script>
 import iSelect from '../components/changeCity/iseclect'
 import Hot from '../components/changeCity/hot'
+import Categroy from '../components/changeCity/catagroy'
 export default {
   // layout:'blank',
   components:{
     iSelect,
-    Hot
+    Hot,
+    Categroy
   }
 }
 </script>

@@ -116,20 +116,6 @@
           } else {
             self.list[self.kind] = []
           }
-          // if(status===200&&count>0){
-          //   let r= pois.filter(item=>item.photos.length).map(item=>{
-          //     return {
-          //       title:item.name,
-          //       pos:item.type.split(';')[0],
-          //       price:item.biz_ext.cost||'暂无',
-          //       img:item.photos[0].url,
-          //       url:'//abc.com'
-          //     }
-          //   })
-          //   self.list[self.kind]=r.slice(0,9)
-          // }else{
-          //   self.list[self.kind]=[]
-          // }
         }
       }
     },
@@ -137,5 +123,5 @@
   }
 </script>
 <style lang="scss">
-  @import "../../assets/css/index/artistic.scss"
+  @import "../../assets/css/index/artistic.scss";
 </style>

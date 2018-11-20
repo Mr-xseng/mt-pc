@@ -1,7 +1,7 @@
 import passport from 'koa-passport'
 import LocalStrategy from 'passport-local'
-// import mongoose from "mongoose";
 import UserModel from '../../dbs/models/users'
+
 
 passport.use(new LocalStrategy(async function(username,password,done){
   let where = {
@@ -28,3 +28,4 @@ passport.deserializeUser(function(user,done){
 })
 
 export default passport
+
