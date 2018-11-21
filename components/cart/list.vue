@@ -1,6 +1,6 @@
 <template>
   <el-table
-    :data="cartData"
+    :data="catData"
     style="width: 980px">
     <el-table-column
       prop="name"
@@ -32,13 +32,12 @@
 </template>
 <script>
   export default {
-    data () {
-      return {
-        cartData: [{
-          name: 'Mr-seng',
-          price:124,
-          count: 1
-        }]
+    props:{
+      catData:{
+        type:Array,
+        default: () => {
+          return []
+        }
       }
     }
   }

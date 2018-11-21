@@ -1,9 +1,13 @@
 import passport from 'koa-passport'
 import LocalStrategy from 'passport-local'
 import UserModel from '../../dbs/models/users'
-
+import mongoose from "mongoose";
+const dbs = 'mongodb://127.0.0.1:27017/student'
 
 passport.use(new LocalStrategy(async function(username,password,done){
+  await mongoose.connect(dbs,{
+    useNewUrlParser: true
+  })
   let where = {
     username
   };
