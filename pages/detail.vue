@@ -46,6 +46,7 @@
   import List from '../components/detail/list.vue'
   import axios from 'axios'
   export default {
+    layout:'blank',
     components:{
       Crumbs,
       Summa,

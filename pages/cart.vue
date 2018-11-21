@@ -11,7 +11,9 @@
           应付金额: <em class="money">¥ {{ total }}</em>
         </p>
         <div class="post">
-          <el-button type="primary">提交订单</el-button>
+          <el-button
+            type="primary"
+            @click="submit">提交订单</el-button>
         </div>
       </el-col>
       <el-col
@@ -25,6 +27,7 @@
 </template>
 <script>
   import List from '../components/cart/list.vue'
+  import axios from 'axios'
   export default {
     components:{
       List
@@ -57,8 +60,24 @@
           cartNo:ctx.query.id
         }
       }
+    },
+    methods:{
+      submit:async function (){
+        let {status,data:{code,id}} = await axios.post('/order/createOrder',{
+          count:this.cart[0].count,
+          price:this.cart[0].price,
+          id:this.cartNo
+        })
+        if (status===200&&code===0){
+          this.$alert(`您已成功下单,订单号为${id}`,{
+            confirmButtonText:'确定',
+            callback:action => {
+              location.href = '/order'
+            }
+          })
+        }
+      }
     }
-
   }
 </script>
 <style lang="scss">

@@ -1,13 +1,19 @@
 <template>
-  <div class="layout-blank">
-    <nuxt/>
-  </div>
+  <el-container class="layout-default">
+    <el-header height="197px">
+      <my-header/>
+    </el-header>
+    <el-main style="margin-bottom: 100px">
+      <nuxt/>
+    </el-main>
+  </el-container>
 </template>
-
 <script>
+  import MyHeader from '../components/public/header/index.vue'
   export default {
+    components: {
+      MyHeader
+    }
   }
 </script>
 
-<style lang="css">
-</style>
