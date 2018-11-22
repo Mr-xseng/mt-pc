@@ -12,6 +12,10 @@ const OrderModule = mongoose.model('Order',new mongoose.Schema({
     type:String,
     require:true
   },
+  count:{
+    type:Number,
+    require:true
+  },
   total:{
     type:Number,
     require:true

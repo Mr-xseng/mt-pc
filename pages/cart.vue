@@ -29,6 +29,7 @@
   import List from '../components/cart/list.vue'
   import axios from 'axios'
   export default {
+    layout:'blank',
     components:{
       List
     },
@@ -47,7 +48,9 @@
       }
     },
     async asyncData(ctx){
+      //请求购物车数据
       let {status,data:{code,data:{name,price}}}=await ctx.$axios.post('/cart/getCart',{
+        //获取购物车ID
         id:ctx.query.id
       })
       if(status===200&&code===0&&name){
@@ -62,14 +65,16 @@
       }
     },
     methods:{
-      submit:async function (){
-        let {status,data:{code,id}} = await axios.post('/order/createOrder',{
+      //提交付款
+      submit:async function () {
+        //创建订单
+        let {status,data:{code,id}} = await axios.post('/order/createOrder', {
           count:this.cart[0].count,
           price:this.cart[0].price,
           id:this.cartNo
         })
         if (status===200&&code===0){
-          this.$alert(`您已成功下单,订单号为${id}`,{
+          this.$alert(`您已成功下单,订单号为${id}`,`下单成功`,{
             confirmButtonText:'确定',
             callback:action => {
               location.href = '/order'

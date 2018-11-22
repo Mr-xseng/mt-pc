@@ -9,6 +9,7 @@
       >{{ item.txt }}</dd>
     </dl>
     <ul>
+      <!-- //产品列表 -->
       <Item
         v-for="(item,idx) in list"
         :key="idx"

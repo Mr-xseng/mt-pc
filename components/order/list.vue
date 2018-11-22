@@ -3,12 +3,12 @@
     <ul>
       <li v-if="cur.length">
         <el-row
-          v-for="(itm,index) in cur"
+          v-for="(item,index) in cur"
           :key="index"
         >
           <el-col :span="4">
             <img
-              :src="item.img"
+              :src="item.Img"
               alt="">
           </el-col>
           <el-col :span="10">

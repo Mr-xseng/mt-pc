@@ -1,3 +1,4 @@
+//订单列表以及 用户管理页面
 import Router from 'koa-router'
 import md5 from 'crypto-js/md5'
 import Cart from '../dbs/models/cart'
@@ -23,6 +24,7 @@ router.post('/createOrder',async ctx => {
     }
   }else {
     let findCart = await Cart.findOne({cartNo:id})
+    // Console.log('findCart')
     let order = new Order({
       id:orderID,
       count,
@@ -54,16 +56,20 @@ router.post('/createOrder',async ctx => {
   }
 })
 
-router.get('/getOrder',async (ctx) => {
+router.post('/getOrders', async (ctx) => {
+  mongoose.connect(dbsModule.dbs,{
+    useNewUrlParser:true
+  })
   if (!ctx.isAuthenticated()) {
     ctx.body = {
-      code:-1,
-      msg:'please login',
-      list:[]
+      code: -1,
+      list: [],
+      msg: 'please login'
     }
   } else {
-    try {
-      let result = await Order.find()
+    // console.log('order')
+    let result = await Order.find({})
+    // console.log('order1')
       if (result) {
         ctx.body = {
           code:0,
@@ -71,17 +77,12 @@ router.get('/getOrder',async (ctx) => {
         }
       } else {
         ctx.body = {
-          code:-1,
+          code: -1,
           list:[]
         }
       }
-    }catch (e) {
-      ctx.body = {
-        code:-1,
-        list:[]
-      }
-    }
   }
-})
+  })
+// })
 
 export default router

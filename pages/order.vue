@@ -59,6 +59,7 @@
 </template>
 <script>
   import List from '../components/order/list'
+  import axios from 'axios'
   export default {
     layout:'blank',
     components:{
@@ -72,7 +73,7 @@
       }
     },
     watch:{
-      activeName(val){
+      activeName: function (val) {
         this.cur = this.list.filter(item => {
           if (val === 'unpay') {
             return item.status === 0
@@ -83,7 +84,7 @@
           }
         })
       },
-      list () {
+      list: function () {
         let val = this.name
         this.cur = this.list.filter(item => {
           if (val === 'unpay') {
@@ -101,7 +102,32 @@
         this.activeName = tab.name
       }
     },
-    async asyncData(ctx) {
+    async asyncData (ctx) {
+      let {status,data:{code,list}} = await ctx.$axios.post(`/order/getOrders`)
+      if (status === 200 && code === 0) {
+        return {
+          list:list.map(item => {
+            return {
+              name:item.name,
+              count:item.count,
+              Img:item.imgs.length ? item.imgs[0].url : '/logo.vue',
+              total:item.total,
+              status:item.status,
+              statusText:item.status === 0 ? '待付款' : '已付款'
+            }
+          }),
+          cur:list.map(item => {
+            return {
+              name:item.name,
+              count:item.count,
+              Img:item.imgs.length ? item.imgs[0].url : '/logo.png',
+              total:item.total,
+              status:item.status,
+              statusText:item.status === 0 ? '待付款' : '已付款'
+            }
+          })
+        }
+      }
     }
   }
 </script>

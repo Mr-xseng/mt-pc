@@ -36,3 +36,4 @@ export default {
 <style lang="scss">
   @import "../assets/css/index/index";
 </style>
+/*根路径显示页面,公共面板为default*/

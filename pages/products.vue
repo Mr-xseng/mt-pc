@@ -24,6 +24,7 @@
   import List from '../components/products/list.vue'
   import Amap from '../components/public/map.vue'
   export default {
+    layout:'blank',
     components:{
       Crumbs,
       Categroy,
@@ -40,14 +41,17 @@
       }
     },
     async asyncData(ctx){
+      //public/header/searchBox.vue 传来keyword
       let keyword = ctx.query.keyword
       let city = ctx.store.state.geo.position.city
+      //根据keyword获取相应的产品的列表
       let {status,data:{count,pois}} = await ctx.$axios.get('/search/resultsByKeywords',{
         params:{
           keyword,
           city
         }
       })
+      //根据所在城市获取区域以及区域的热门产品
       let {status:status2,data:{areas,types}} = await ctx.$axios.get('/categroy/crumbs',{
         params:{
           city
@@ -55,6 +59,7 @@
       })
       if(status===200&&count>0&&status2===200){
         return {
+          //遍历筛选过滤
           list: pois.filter(item=>item.photos.length).map(item=>{
             return {
               type: item.type,

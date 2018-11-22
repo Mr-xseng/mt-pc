@@ -43,9 +43,11 @@
     methods: {
       createCart: async function () {
         let self = this
+        //创建购物车
         let {status,data:{code,id}} = await axios.post('/cart/create',{
           params:{
             id:Math.random().toString().slice(3,9),
+            //购物车订单数据
             detail:{
               name:self.meta.name,
               price:self.meta.biz_ext.cost,
@@ -54,9 +56,10 @@
           }
         })
         if (status === 200 && code === 0) {
+          //跳转提交订单页,并传递创建的购物车ID
           window.location.href = `/cart?id=${id}`
         } else {
-          console.log('err')
+          location.href = '/'
         }
       }
     }

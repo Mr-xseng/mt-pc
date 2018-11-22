@@ -1,3 +1,4 @@
+<!-- //产品详情页 -->
 <template>
   <div class="page-detail">
     <el-row>
@@ -59,6 +60,7 @@
     },
     async asyncData(ctx){
       let {keyword,type}=ctx.query;
+      //获取产品详情数据,以及登录状态
       let {status,data:{product,more:list,login}}=await axios.get('/search/products',{
         params:{
           keyword,

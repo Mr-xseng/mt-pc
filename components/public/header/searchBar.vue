@@ -23,6 +23,7 @@
             v-if="isHotPlace"
             class="hotPlace">
             <dt>热门搜索</dt>
+            <!-- 跳转到产品详情页,传keyword -->
             <dd
               v-for="(item,idx) in $store.state.home.hotPlace.slice(0,4)"
               :key="idx">
@@ -110,7 +111,7 @@ export default {
       let self=this;
       let city=self.$store.state.geo.position.city.replace('市','')
       self.searchList=[]
-      // console.log(self.search)
+      // 使用外部接口获取热门数据
       let {status,data:{top}}=await axios.get('/search/top',{
         params:{
           input:self.search,

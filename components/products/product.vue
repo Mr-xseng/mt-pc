@@ -1,3 +1,4 @@
+<!-- //产品列表组件 -->
 <template>
   <dl class="s-item">
     <dt>
@@ -6,6 +7,7 @@
         alt="商品图片">
     </dt>
     <dd>
+      <!-- //跳转到产品的详情页,并传参:产品名,产品的类型 -->
       <h3><nuxt-link :to="{path:'detail',query:{keyword:meta.name,type:meta.module}}">{{ meta.name }}</nuxt-link></h3>
       <el-rate
         v-model="meta.rate"
