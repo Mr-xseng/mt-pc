@@ -36,6 +36,7 @@
 <script>
 import axios from 'axios'
 import _ from 'lodash'
+import pyjs from 'js-pinyin'
 export default {
   data () {
     return {
@@ -51,7 +52,7 @@ export default {
   watch: {
    pvalue: async function(newPvalue){
      let self = this
-     console.log(newPvalue)
+     // console.log(newPvalue)
      let {status,data:{city}} = await axios.get(`/geo/province/${newPvalue}`)
       if (status) {
         self.city = city.map(item => {
@@ -79,29 +80,36 @@ export default {
   methods: {
     querySearchAsync: _.debounce(async function(query,cb) {
       let self = this
+      const isChinese = /.*[\u4e00-\u9fa5]+.*$/.test(query)
       if (!self.cities.length) {
         let {status,data:{city}} = await axios.get('/geo/city')
-        if (status === 200) {
+        if (status === 200 && query) {
           self.cities = city.map(item => {
             return {
               value:item.name,
               province:item.province,
-              city:item.name
+              city:item.name,
+              pinyin:pyjs.getFullChars(item.name).toLocaleLowerCase()
             }
           })
         }
       }
-      cb(self.cities.filter(item => item.value.indexOf(query) > -1))
+    cb(self.cities.filter(item => (isChinese ? item.value:item.pinyin).indexOf(query) > -1))
     },200),
-    handleSelect () {
+    handleSelect:async function () {
       let city = this.input
       let newCity = this.cities.filter(item => item.city === city)
       this.newPosition = {
         province:newCity[0].province,
         city:newCity[0].city
       }
-      this.$store.commit('geo/setNewPosition',this.newPosition)
-      window.location.href = '/'
+      let {status,data:{code}} = await axios.post('position/setNewPosition',{
+        province:this.newPosition.province,
+        city:this.newPosition.city
+      })
+      if (status===200&&code===0) {
+        window.location.href = '/'
+      }
     }
   }
 }
