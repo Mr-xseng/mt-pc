@@ -30,18 +30,20 @@ router.post('/setNewPosition',async ctx => {
 })
 
 router.post('/getNewPosition',async ctx => {
+  mongoose.connect(dbsModule.dbs,{
+    useNewUrlParser:true
+  })
   let result = await Position.find({})
   if (result) {
     ctx.body = {
       code:0,
-      newPosition:result
+      newPosition:result[0]
     }
   } else {
     ctx.body = {
-      code:-1
+      code: -1
     }
   }
 })
-
 
 export default router
