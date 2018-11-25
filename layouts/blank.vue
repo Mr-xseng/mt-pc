@@ -3,7 +3,7 @@
     <el-header height="197px">
       <my-header/>
     </el-header>
-    <el-main style="margin-bottom: 100px">
+    <el-main style="margin-bottom: 300px">
       <nuxt/>
     </el-main>
   </el-container>
@@ -16,4 +16,3 @@
     }
   }
 </script>
-

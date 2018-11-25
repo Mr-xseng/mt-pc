@@ -10,9 +10,11 @@
     <el-col :span="5">
       <amap
         v-if="point.length"
+        ref="amap"
         :width="230"
         :height="290"
-        :point="point"/>
+        :point="point"
+      />
     </el-col>
   </el-row>
 
@@ -23,8 +25,10 @@
   import Categroy from '../components/products/categroy.vue'
   import List from '../components/products/list.vue'
   import Amap from '../components/public/map.vue'
+  const scrollHeight = 351
+  const ElementHeight = 214
+  const SCROLL_TOP = 227
   export default {
-    layout:'blank',
     components:{
       Crumbs,
       Categroy,
@@ -37,7 +41,32 @@
         types:[],
         areas:[],
         keyword:'',
-        point:[]
+        point:[],
+        pointArr:[]
+      }
+    },
+    mounted(){
+      this.$store.commit('geo/setProduct',this.list)
+      window.addEventListener('scroll',this.MapScroll)
+    },
+    methods:{
+      MapScroll () {
+        let scrollTop = document.documentElement.scrollTop
+        let currentIndex
+        // window.console.log(scrollTop,SCROLL_TOP)
+        if (scrollTop >= SCROLL_TOP) {
+          this.$refs.amap.onScroll()
+        } else {
+          this.$refs.amap.moveScroll()
+        }
+        if (scrollHeight < scrollTop) {
+          let newHeight = scrollTop - scrollHeight
+          currentIndex = Math.round(newHeight / ElementHeight)
+        } else {
+          currentIndex = 0
+        }
+        this.point = this.pointArr.filter((item,index) => index === currentIndex)[0].point
+        // window.console.log(currentPoint)
       }
     },
     async asyncData(ctx){
@@ -71,11 +100,15 @@
               scene: item.tag,
               tel: item.tel,
               status: '可订明日',
-              location: item.location,
               module: item.type.split(';')[0]
             }
           }),
           keyword,
+          pointArr:pois.map(item => {
+            return {
+              point:item.location.split(',')
+            }
+          }),
           areas: areas.filter(item=>item.type!=='').slice(0,5),
           types: types.filter(item=>item.type!=='').slice(0,5),
           point: (pois.find(item=>item.location).location||'').split(',')

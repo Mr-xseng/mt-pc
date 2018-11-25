@@ -1,11 +1,14 @@
 <template>
   <div
+    ref="map"
     :id="id"
     :style="{width:width+'px',height:height+'px',margin:'34px auto'}"
-    class="m-map"/>
+    class="m-map"
+  />
 </template>
 
 <script>
+  const SCROLL_TOP = 40
   export default {
     props: {
       width: {
@@ -63,5 +66,24 @@
       jsapi.src = url
       document.head.appendChild(jsapi)
     },
+    methods:{
+      onScroll () {
+          // window.console.log('success')
+          this.$refs.map.style['position'] = `fixed`
+          this.$refs.map.style['top'] = `-${SCROLL_TOP}px`
+          this.$refs.map.style['right'] = '85px'
+          // window.console.log(this.$refs.map.style)
+        },
+        moveScroll () {
+          this.$refs.map.style['position'] = ''
+          this.$refs.map.style['top'] = 0
+          this.$refs.map.style['right'] = 0
+        }
+    }
   }
 </script>
+<style lang="scss">
+  .m-map{
+    top:0;
+  }
+</style>

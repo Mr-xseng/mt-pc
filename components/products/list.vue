@@ -35,7 +35,7 @@
     data() {
       return {
         currentIndex:0,
-        copyList:[],
+        // copyList:[],
         nav: [
           {
             name: 's-default',
@@ -57,30 +57,25 @@
         ]
       }
     },
-    create(){
-      this.copyList = this.list
-    },
+    // mounted() {
+    //   this.copyList = this.list
+    // },
     methods: {
       navSelect: function (index) {
+        const copyList = this.list.slice()
         this.currentIndex = index
         if (index === 0) {
-          this.list = this.copyList
-          console.log(this.list)
+          this.list = this.$store.state.geo.productList
         }
-        if (index === 1) {
-          let sclist = this.list
-          sclist.sort((a,b) => a.price - b.price)
-          this.list = sclist
+        if (index===1) {
+          this.list = copyList.sort((a,b) => a.price - b.price)
         }
         if (index === 2) {
-          let sclist = this.list
-          sclist.sort((a,b) => b.comment - a.comment)
-          this.list = sclist
+          this.list = copyList.sort((a,b) => a.comment - b.comment)
         }
         if (index === 3) {
-          let sclist = this.list
-          sclist.sort((a,b) => b.rate - a.rate)
-          this.list = sclist
+          copyList.sort((a,b) => b.rate - a.rate)
+          this.list = copyList
         }
       }
     }
